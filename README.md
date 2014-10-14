@@ -1,4 +1,4 @@
-docker-mean
+docker-near
 ===========
 
-Runs MEAN Stack inside Docker
+Runs NEAR Stack inside Docker
