@@ -5,6 +5,8 @@ WORKDIR /webapps/grassroots
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 
+RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+
 #Runit
 RUN apt-get install -y runit 
 CMD /usr/sbin/runsvdir-start
@@ -20,32 +22,29 @@ RUN sed -i "s/PermitRootLogin without-password/#PermitRootLogin without-password
 RUN apt-get install -y vim less net-tools inetutils-ping curl git telnet nmap socat dnsutils netcat tree htop unzip sudo software-properties-common
 
 #rethinkDB
-RUN source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list && \
+RUN /bin/bash -c "source /etc/lsb-release" && echo "deb http://download.rethinkdb.com/apt trusty main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list && \
     wget -qO- http://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add - && \
     sudo apt-get update && \
-    sudo apt-get install rethinkdb
+    sudo apt-get -y install rethinkdb
 
 
 #Node
-RUN curl http://nodejs.org/dist/v0.10.29/node-v0.10.29-linux-x64.tar.gz | tar xz
-RUN mv node* node && \
-    ln -s /node/bin/node /usr/local/bin/node && \
-    ln -s /node/bin/npm /usr/local/bin/npm
+RUN sudo apt-get update && \
+    sudo apt-get -y install nodejs && \
+    sudo apt-get -y install npm
+RUN /bin/bash -c "ln -s /usr/bin/nodejs /usr/local/bin/node"
 
 #Express
 RUN npm install express -g
 
 #NEAR
-RUN git clone https://github.com/shadowsyntax/NEAR-Stack.git 
-RUN cd NEAR-Stack && \
-    npm install
-
-RUN npm install -g gulp
-RUN npm install -g bower
-
-RUN cd NEAR-Stack && \
-    bower --allow-root install && \
-    npm install
+RUN git clone https://github.com/shadowsyntax/NEAR-Stack.git /NEAR-Stack
+WORKDIR /NEAR-Stack && \
+RUN npm install && \
+RUN npm install -g gulp && \
+RUN npm install -g bower && \
+RUN bower --allow-root install && \
+RUN npm install
 
 #Add runit services
 ADD sv /etc/service 

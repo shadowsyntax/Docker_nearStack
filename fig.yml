@@ -1,12 +1,9 @@
 nearserver:
-	build: .
-	ports:
-	- 8000:8000
-	environment:
-	- RACK_ENV: development
-	- SESSION_SECRET:
-	working_dir: /webapps/grassroots
-	volumes:
-	- .:/webaapps/grassroots
-
-
+ build: .
+ ports:
+ - "8000:3000"
+ environment:
+ - NODE_ENV=development
+ working_dir: /webapps/grassroots
+ volumes:
+ - .:/webaapps/grassroots
