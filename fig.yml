@@ -6,4 +6,4 @@ nearserver:
  - NODE_ENV=development
  working_dir: /webapps/grassroots
  volumes:
- - .:/webaapps/grassroots
+ - /webapps/grassroots/NEAR-Stack:/opt/NEAR-Stack

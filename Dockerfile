@@ -38,13 +38,19 @@ RUN /bin/bash -c "ln -s /usr/bin/nodejs /usr/local/bin/node"
 RUN npm install express -g
 
 #NEAR
-RUN git clone https://github.com/shadowsyntax/NEAR-Stack.git /NEAR-Stack
-WORKDIR /NEAR-Stack && \
-RUN npm install && \
-RUN npm install -g gulp && \
-RUN npm install -g bower && \
-RUN bower --allow-root install && \
-RUN npm install
+WORKDIR /opt/NEAR-Stack
+RUN git clone https://github.com/shadowsyntax/NEAR-Stack.git 
+#    npm cache clean && \
+#    npm install && \
+#    npm install -g gulp && \
+#    npm install -g bower && \
+#    bower --allow-root install && \
+#    npm install
 
 #Add runit services
+WORKDIR /webapps/grassroots
 ADD sv /etc/service 
+
+#Start NEAR-Stack server
+WORKDIR /opt/NEAR-Stack
+RUN /bin/bash -c "cd /opt/NEAR-Stack" && gulp
